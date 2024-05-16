@@ -41,7 +41,6 @@ void Desenhar(void)
     glPopMatrix();
 
     //Desenhar Poligono qualquer
-    
     glColor3f(1.0, 1.0, 1.0);
     glPushMatrix();
     glTranslatef(-0.5, -0.5, 0.0);
@@ -51,6 +50,8 @@ void Desenhar(void)
     glVertex2f(0.0, -0.5); 
     glVertex2f(1.0, -0.5); 
     glVertex2f(1.0, 0.0); 
+    glEnd();
+    glPopMatrix();
     glFlush();
 }
 
