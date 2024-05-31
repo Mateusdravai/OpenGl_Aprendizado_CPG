@@ -1,119 +1,68 @@
 #include <GL/freeglut.h>
 
-// Variáveis globais para controle de zoom e deslocamento
-float zoom = 1.0;
-float zoomIncrement = 0.1;
-float offsetX = 0.0;
-float offsetY = 0.0;
-float offsetIncrement = 0.1;
+//Posição do quadrado
+float quadradoX = 0.0f;
+float quadradoY = 0.0f;
 
-void Desenhar(void)
+float quadradoTamanho = 0.1f;
+
+int windowHeight = 800;
+int windowWidth = 800;
+
+void DesenharQuadrado()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // Desenhar linha azul
-    glColor3f(1.0, 0.0, 1.0);
-    glPushMatrix();
-    glTranslatef(-0.5, 0.5, 0.0); // Transladar para a posição desejada
-    glScalef(0.5, 0.5, 0.5);
-    glBegin(GL_LINES);
-    glVertex2f(0.0, 0.0);
-    glVertex2f(1.0, -1.0);
-    glEnd();
-    glPopMatrix();
-
-    // Desenhar quadrado azul
-    glColor3f(0.0, 0.0, 1.0);
-    glPushMatrix();
-    glTranslatef(-0.5, 0.0, 0.0); // Transladar para a posição desejada
-    glScalef(0.5, 0.5, 0.5);
-    glBegin(GL_QUADS);
-    glVertex2f(0.0, 0.0);
-    glVertex2f(0.0, -1.0);
-    glVertex2f(-1.0, -1.0);
-    glVertex2f(-1.0, 0.0);
-    glEnd();
-    glPopMatrix();
-
-    // Desenhar triângulo
-    glColor3f(0.0, 1.0, 0.0);
-    glPushMatrix();
-    glTranslatef(0.5, 0.5, 0.0); // Transladar para a posição desejada
-    glScalef(0.5, 0.5, 0.5);
-    glBegin(GL_TRIANGLES);
-    glVertex2f(0.0, 0.0);
-    glVertex2f(1.0, -1.0);
-    glVertex2f(-1.0, -1.0);
-    glEnd();
-    glPopMatrix();
-
-    // Desenhar Poligono qualquer
-    glColor3f(1.0, 1.0, 1.0);
-    glPushMatrix();
-    glTranslatef(-0.5, -0.5, 0.0);
-    glScalef(0.5, 0.5, 0.5);
-    glBegin(GL_POLYGON);
-    glVertex2f(0.0, 0.0);
-    glVertex2f(0.0, -0.5);
-    glVertex2f(1.0, -0.5);
-    glVertex2f(1.0, 0.0);
-    glEnd();
-    glPopMatrix();
-
-    glFlush();
+	glBegin(GL_QUADS);
+	glVertex2d(quadradoX - quadradoTamanho, quadradoY - quadradoTamanho);
+	glVertex2d(quadradoX + quadradoTamanho, quadradoY - quadradoTamanho);
+	glVertex2d(quadradoX + quadradoTamanho, quadradoY + quadradoTamanho);
+	glVertex2d(quadradoX - quadradoTamanho, quadradoY + quadradoTamanho);
+	glEnd();
 }
 
-void AtualizarProjecao()
-{
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(-1.0 * zoom + offsetX, 1.0 * zoom + offsetX, -1.0 * zoom + offsetY, 1.0 * zoom + offsetY);
-    glMatrixMode(GL_MODELVIEW);
+void Reshape(int width, int height) {
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(-1.0, 1.0, -1.0, 1.0); // Mantém a projeção ortográfica centrada
+	glMatrixMode(GL_MODELVIEW);
 }
 
-void Inicializar()
+void Display()
 {
-    glClearColor(0.0, 0.0, 0.0, 1.0);
-    AtualizarProjecao();
-}
+	glClear(GL_COLOR_BUFFER_BIT);
+	DesenharQuadrado();
+	glutSwapBuffers();
+};
 
 void Teclado(int key, int x, int y)
 {
-    if (key == GLUT_KEY_UP)
-    {
-        zoom -= zoomIncrement;
-        if (zoom < 0.1) zoom = 0.1; // Evita zoom muito pequeno
-        AtualizarProjecao();
-    }
-    if (key == GLUT_KEY_DOWN)
-    {
-        zoom += zoomIncrement;
-        AtualizarProjecao();
-    }
-    if (key == GLUT_KEY_LEFT)
-    {
-        offsetX -= offsetIncrement;
-        AtualizarProjecao();
-    }
-    if (key == GLUT_KEY_RIGHT)
-    {
-        offsetX += offsetIncrement;
-        AtualizarProjecao();
-    }
-    glutPostRedisplay();
+	switch (key)
+	{
+	case GLUT_KEY_LEFT:
+		quadradoX -= 0.1f;
+		break;
+	case GLUT_KEY_RIGHT:
+		quadradoX += 0.1f;
+		break;
+	}
+	glutPostRedisplay();
 }
 
-int main(int argc, char** argv)
-{
-    glutInit(&argc, argv);
-    glutInitWindowSize(800, 800);
-    glutInitWindowPosition(0, 0);
-    glutCreateWindow("Desenho");
+int main(int argc, char** argv) {
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitWindowSize(windowWidth, windowHeight);
+	glutCreateWindow("Movendo o Quadrado");
 
-    Inicializar();
-    glutDisplayFunc(Desenhar);
-    glutSpecialFunc(Teclado); // Define a função de teclado especial
-    glutMainLoop();
+	// Configurações de cor de fundo
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 
-    return 0;
+	// Registra callbacks
+	glutDisplayFunc(Display);
+	glutReshapeFunc(Reshape);
+	glutSpecialFunc(Teclado);
+
+	glutMainLoop();
+	return 0;
 }
+
