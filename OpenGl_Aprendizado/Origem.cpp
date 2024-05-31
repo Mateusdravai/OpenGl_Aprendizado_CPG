@@ -19,11 +19,11 @@ void DesenharQuadrado()
 	glEnd();
 }
 
-void Reshape(int width, int height) {
+void Projecao(int width, int height) {
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(-1.0, 1.0, -1.0, 1.0); // Mantém a projeção ortográfica centrada
+	gluOrtho2D(-1.0, 1.0, -1.0, 1.0); 
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 
 	// Registra callbacks
 	glutDisplayFunc(Display);
-	glutReshapeFunc(Reshape);
+	glutReshapeFunc(Projecao);
 	glutSpecialFunc(Teclado);
 
 	glutMainLoop();
